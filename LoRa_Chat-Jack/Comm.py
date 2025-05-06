@@ -25,9 +25,12 @@ class Comm:
             # self.serial.write(str("AT+MODE=2,3000,9000\r\n").encode())  # CLASS C
             self.serial.write(str("AT+NETWORKID=" + str(self.networkid) + "\r\n").encode())
 
-            newAddr = (math.ceil(random.random() * 383)) + 16000
-            self.messenger.myAddress = newAddr
-            self.serial.write(str("AT+ADDRESS=" + str(newAddr) + "\r\n").encode())
+            tempAddr = random.randint(60000, 65535)
+            self.messenger.myAddress = tempAddr
+            # Send command to set temporary address
+            self.serial.write(str(f"AT+NETWORK={tempAddr}\r\n".encode()))
+            print(f"[Comm] Set temporary address: {tempAddr}")
+            # Actual address assignment will now happen in Training.py
 
             self.thread = threading.Thread(target=self._listener, daemon=True)  # Daemon allows background threading.
             self.thread.start()
